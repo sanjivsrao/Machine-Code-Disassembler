@@ -1,3 +1,4 @@
+Addr_0004:
 add $t1, $t2, $t3
 addu $t1, $t2, $t3
 and $s1, $s2, $s3
@@ -11,13 +12,14 @@ lw $t1, 4($t0)
 lw $t2, 100($t0)
 sw $t1, 4($t0)
 sw $t2, 100($t0)
-beq $t1, $t2, 3
+beq $t1, $t2, do
 lw $t2, 4($s0)
 sw $t1, 5293($s1)
-bne $t1, $t2, -17
+bne $t1, $t2, do
+Addr_0000:
 sll $s0, $s1, 2
 srl $s1, $s0, 4
 andi $t8, $t7, 256
 ori $t7, $t8, 3916
 addi $t7, $t8, 3916
-beq $t1, $t2, -23
+beq $t1, $t2, do

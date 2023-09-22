@@ -49,20 +49,34 @@ def main():
     
     # Checks for branch instructions and creates labels
     label_list = []
-    address_list = []
+    
+    j = 0
     for instruction in instruction_list:
         if instruction.opcode == "beq" or instruction.opcode == "bne":
-            instruction.
-    for instruction in instruction_list:
-        if (instruction_list.index(instruction)) in label_list:
-            #Isolates position for Address tag
-            new_pos = instruction_list.index(instruction)+instruction.imm+1
-            if new_pos in address_list:
-                pass
-            else:
-                address_list.append(new_pos)
-                instruction_list[new_pos:] = disassembler.shift_elements(instruction_list[new_pos:],1)
-
+            label_list.append(j)
+            temp = hex_data[j]
+            instruction.addr = temp[-4:]
+            
+        j += 1
+    print("Successfully identified branch targets")
+    
+    target_index = []
+    index_select = []
+    # Parsing through object list per index
+    for i in range(len(instruction_list)):
+        if i in label_list:
+            print(instruction_list[i].imm)
+            new_pos = i+int(instruction_list[i].imm)+1
+            print(new_pos)
+            if new_pos not in target_index:
+                target_index.append(new_pos)
+                index_select.append(i)
+    print("Target:")
+    print(target_index)
+    print("Index:")
+    print(index_select)
+    
+    
 
     # Begins new file generation
     new_file = filetitle+".s"
@@ -72,7 +86,16 @@ def main():
         print("Error: File already exists. Overwriting preexistent file.")
         new_file = open(new_file,"w")
     
+    line = 0
+
     for instruction in instruction_list:
+        for index in range(len(target_index)):
+            if line == target_index[index]:
+                address = format(index*4, '04X')
+                target_index.pop(index)
+                index_select.pop(index)
+                new_file.write("Addr_"+str(address)+":\n")
+
         if (isinstance(instruction,RegisterInstruction)):
             if instruction.funct == "sll" or instruction.funct == "srl":
                 concat = (instruction.funct+" "+instruction.rd+", "+instruction.rt+", "+str(instruction.shamt))
@@ -83,18 +106,17 @@ def main():
             if instruction.opcode == "sw" or instruction.opcode == "lw":
                 concat = (instruction.opcode+" "+instruction.rt+", "+str(instruction.imm)+"("+instruction.rs+")")
             elif instruction.opcode == "beq" or instruction.opcode == "bne":
-                print(str(instruction.addr)+"\n")
-                concat = (instruction.opcode+" "+instruction.rs+", "+instruction.rt+", "+str(instruction.imm))
+                concat = (instruction.opcode+" "+instruction.rs+", "+instruction.rt+", "+"do")
             else:
                 concat = (instruction.opcode+" "+instruction.rs+", "+instruction.rt+", "+str(instruction.imm))
             new_file.write(concat+"\n")
         elif (isinstance(instruction,JumpInstruction)):
             print("Jump not implemented")
-    new_file.seek(0)
+        line+=1
     
     new_file.close()
             
-
+            
 
 if __name__ == "__main__":
     main()

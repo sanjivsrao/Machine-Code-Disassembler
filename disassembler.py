@@ -18,9 +18,13 @@ def twos_comptodeci(imm):
         decimal_value = int(imm, 2)
     return decimal_value
 
-def shift_elements(arr, shamt):
-    new_arr = [0] * (len(arr) + shamt)
-    for i in range(len(arr)):
-        new_arr[i + shamt] = arr[i]
-    new_arr[0] = 0
-    return new_arr
+def shift_and_insert(arr, index, new_value):
+    if index < 0 or index >= len(arr):
+        print("Invalid index")
+        return
+
+    for i in range(len(arr) - 1, index, -1):
+        arr[i] = arr[i - 1]
+
+    # Insert the new value at the specified index
+    arr[index] = new_value

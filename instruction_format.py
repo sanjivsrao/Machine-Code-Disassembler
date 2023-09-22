@@ -7,7 +7,6 @@ class RegisterInstruction:
         if len(binary_string) != 32:
             raise ValueError("Opcode must be 32 bits long")
         self.type = "R"
-        self.index
         self.opcode = int(binary_string[:6],2)
         self.rs = RegisterDict[int(binary_string[6:11],2)]
         self.rt = RegisterDict[int(binary_string[11:16],2)]
@@ -20,13 +19,7 @@ class ImmediateInstruction:
         if len(binary_string) != 32:
             raise ValueError("Opcode must be 32 bits long")
         self.type = "I"
-        self.index
-        op = int(binary_string[:6],2)
-        if op in OpCodeDict:
-            self.opcode = OpCodeDict[int(binary_string[:6],2)]
-        else:
-            print("Cannot disassemble "+str(op)+ " at line "+str(i))
-            sys.exit(0)
+        self.opcode = OpCodeDict[int(binary_string[:6],2)]
         self.rs = RegisterDict[int(binary_string[6:11],2)]
         self.rt = RegisterDict[int(binary_string[11:16],2)]
         self.imm = twos_comptodeci(binary_string[16:])
@@ -37,7 +30,6 @@ class JumpInstruction:
         if len(binary_string) != 32:
             raise ValueError("Input binary string must be 32 bits long")
         self.type = "J"
-        self.index
         self.opcode = JumpDict[int(binary_string[:6],2)]
         self.addr = hex(int(binary_string[6:])).zfill(4)
 
