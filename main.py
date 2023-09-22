@@ -91,9 +91,7 @@ def main():
     for instruction in instruction_list:
         for index in range(len(target_index)):
             if line == target_index[index]:
-                address = format(index*4, '04X')
-                target_index.pop(index)
-                index_select.pop(index)
+                address = format(target_index[index]*4, '04X')
                 new_file.write("Addr_"+str(address)+":\n")
 
         if (isinstance(instruction,RegisterInstruction)):
