@@ -32,11 +32,8 @@ def main():
         hex_data.append(hex_line)
         data.append(binary_line)
 
-    print (data)
-    print (hex_data)
     i = 0
     for code in data:
-        print(str(i)+":"+code)
         i+=1
         decimal_opcode = int(code[:6],2)
         if decimal_opcode == 0:
@@ -44,6 +41,11 @@ def main():
         elif decimal_opcode == 2 or decimal_opcode == 3:
             instf = JumpInstruction(code)
         else:
+            try:
+                a = instruction_format.OpCodeDict[int(code[:6],2)]
+            except:
+                print("Cannot disassemble " + str(format(int(code,2), '04X')) + " at line " +str(i)) #format() is an integer to hex conversion
+                sys.exit(0)
             instf = ImmediateInstruction(code)
         instruction_list.append(instf)
     
@@ -58,23 +60,16 @@ def main():
             instruction.addr = temp[-4:]
             
         j += 1
-    print("Successfully identified branch targets")
     
     target_index = []
     index_select = []
     # Parsing through object list per index
     for i in range(len(instruction_list)):
         if i in label_list:
-            print(instruction_list[i].imm)
             new_pos = i+int(instruction_list[i].imm)+1
-            print(new_pos)
             if new_pos not in target_index:
                 target_index.append(new_pos)
                 index_select.append(i)
-    print("Target:")
-    print(target_index)
-    print("Index:")
-    print(index_select)
     
     
 
@@ -87,11 +82,10 @@ def main():
         new_file = open(new_file,"w")
     
     line = 0
-    branch_counter = 0
     for instruction in instruction_list:
         for index in range(len(target_index)):
             if line == target_index[index]:
-                address = format(target_index[index]*4, '04X')
+                address = format(target_index[index]*4, '04X') #Integer to HEX conversion
                 new_file.write("Addr_"+str(address)+":\n")
 
 
@@ -107,9 +101,6 @@ def main():
             elif instruction.opcode == "beq" or instruction.opcode == "bne":
                 branch_counter += 1
                 concat = ("\t"+instruction.opcode+" "+instruction.rs+", "+instruction.rt+", Addr_"+str(format((line+instruction.imm+1)*4, '04X')))
-                print(str(instruction.imm))
-                print(str(instruction.addr))
-                print(line+instruction.imm+1)
             else:
                 concat = ("\t"+instruction.opcode+" "+instruction.rt+", "+instruction.rs+", "+str(instruction.imm))
             new_file.write(concat+"\n")
