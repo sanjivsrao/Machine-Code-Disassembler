@@ -87,33 +87,37 @@ def main():
         new_file = open(new_file,"w")
     
     line = 0
-
+    branch_counter = 0
     for instruction in instruction_list:
         for index in range(len(target_index)):
             if line == target_index[index]:
                 address = format(target_index[index]*4, '04X')
                 new_file.write("Addr_"+str(address)+":\n")
 
+
         if (isinstance(instruction,RegisterInstruction)):
             if instruction.funct == "sll" or instruction.funct == "srl":
-                concat = (instruction.funct+" "+instruction.rd+", "+instruction.rt+", "+str(instruction.shamt))
+                concat = ("\t"+instruction.funct+" "+instruction.rd+", "+instruction.rt+", "+str(instruction.shamt))
             else:
-                concat = (instruction.funct+" "+instruction.rd+", "+instruction.rs+", "+instruction.rt)
+                concat = ("\t"+instruction.funct+" "+instruction.rd+", "+instruction.rs+", "+instruction.rt)
             new_file.write(concat+"\n")
         elif (isinstance(instruction,ImmediateInstruction)):
             if instruction.opcode == "sw" or instruction.opcode == "lw":
-                concat = (instruction.opcode+" "+instruction.rt+", "+str(instruction.imm)+"("+instruction.rs+")")
+                concat = ("\t"+instruction.opcode+" "+instruction.rt+", "+str(instruction.imm)+"("+instruction.rs+")")
             elif instruction.opcode == "beq" or instruction.opcode == "bne":
-                concat = (instruction.opcode+" "+instruction.rs+", "+instruction.rt+", "+"do")
+                branch_counter += 1
+                concat = ("\t"+instruction.opcode+" "+instruction.rs+", "+instruction.rt+", Addr_"+str(format((line+instruction.imm+1)*4, '04X')))
+                print(str(instruction.imm))
+                print(str(instruction.addr))
+                print(line+instruction.imm+1)
             else:
-                concat = (instruction.opcode+" "+instruction.rs+", "+instruction.rt+", "+str(instruction.imm))
+                concat = ("\t"+instruction.opcode+" "+instruction.rt+", "+instruction.rs+", "+str(instruction.imm))
             new_file.write(concat+"\n")
         elif (isinstance(instruction,JumpInstruction)):
             print("Jump not implemented")
         line+=1
     
     new_file.close()
-            
             
 
 if __name__ == "__main__":

@@ -26,5 +26,4 @@ def shift_and_insert(arr, index, new_value):
     for i in range(len(arr) - 1, index, -1):
         arr[i] = arr[i - 1]
 
-    # Insert the new value at the specified index
     arr[index] = new_value
